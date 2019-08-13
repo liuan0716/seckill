@@ -1,0 +1,112 @@
+<!DOCTYPE HTML>
+<html lang="zh-CN" xmlns:th="http://www.thymeleaf.org" xmlns:HH="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!-- 上述3个meta标签*必须*放在最前面，任何其他内容都*必须*跟随其后！ -->
+    <meta name="description" content="">
+    <meta name="author" content="">
+    <link rel="icon" href="../../favicon.ico">
+    <!-- Bootstrap -->
+    <link th:href="@{/css/signin.css}" rel="stylesheet">
+    <link th:href="@{/css/bootstrap.min.css}" rel="stylesheet">
+    <link th:href="@{/css/me.css}" rel="stylesheet">
+    <title>第一个thymeleaf程序</title>
+</head>
+<body>
+    <div class="headBar" th:include="header_com ::pagination"></div>
+    <br/><br/><br/>
+    <div class="row">
+        <div class="col-sm-4 col-md-4">
+            <div class="thumbnail">
+                <img th:src="@{/img/1.jpg}" alt="..." style="width:300px;height:300px;">
+                <div class="caption">
+                    <h3 th:text="'活动商品   '+${seckill.objName}">Thumbnail label</h3>
+                    <p th:text="'开始时间   '+${#dates.format(seckill.createTime,'yyyy-MM-dd HH:mm:ss')}"></p>
+                    <p th:text="'库存   '+${seckill.number}"></p>
+                    <p>
+                        <a href="#" class="btn btn-primary" role="button" th:onclick="'ajaxSubmit('+${seckill.seckilledId}+')'">查看</a>
+                        <a href="#" class="btn btn-primary" id="seckill_submit" role="button" th:onclick="'seckill('+${seckill.seckilledId}+','+${seckill.seckilledId}+')'">开始</a>
+                    </p>
+
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- jQuery (Bootstrap 的所有 JavaScript 插件都依赖 jQuery，所以必须放在前边) -->
+    <script th:src="@{/js/jquery-3.4.1.min.js}"></script>
+    <!-- 加载 Bootstrap 的所有 JavaScript 插件。你也可以根据需要只加载单个插件。 -->
+    <script th:src="@{/js/bootstrap.min.js}"></script>
+    <script type="text/javascript" th:inline="javascript">
+
+
+        /*<![CDATA[*/
+        const ctxPath =/*[[${#httpServletRequest.getScheme() + '://' + #httpServletRequest.getServerName() + ':' + #request.getServerPort()  + #request.getContextPath() + '/'}]]*/
+            /*]]>*/
+
+        $(function(){
+            $("#seckill_submit").hide();
+        });
+
+        function ajaxSubmit(s){
+
+            const seckillId={"seckillId":s};
+            $.ajax(
+                {
+                    url:ctxPath+"seckill/exposer",
+                    type:"post",
+                    dataType:"json",
+                    data:seckillId,
+                    success:function(data){
+
+                        if(!data.object.exposed){
+                            alert("抱歉，不能秒杀");
+                            $("#seckill_submit").hide();
+                        }else{
+                            $("#seckill_submit").show();
+                        }
+
+                    },
+                    error:function(){
+                        alert("error");
+                        window.location.href=ctxPath+"user/login";
+                        $("#seckill_submit").hide();
+                    }
+                }
+            );
+
+        }
+
+        function seckill(id,md5){
+
+            const order={"seckillId":id,"md5":md5};
+            $.ajax(
+                {
+                    url:ctxPath+"seckill/execute",
+                    type:"post",
+                    dataType:"json",
+                    data:order,
+                    success:function(data){
+
+                        if(data.status==1){
+                            window.location.href=ctxPath+"seckill/"+id+"/detail";
+                        }else{
+                            alert(data.object.status);
+                        }
+
+                    },
+                    error:function(){
+                        window.location.href=ctxPath+"seckill/list";
+                    }
+                }
+            );
+
+        }
+
+
+
+    </script>
+</body>
+</html>

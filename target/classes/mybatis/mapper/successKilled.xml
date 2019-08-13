@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+    PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.mapper.SuccessKilledMapper">
+
+	<insert id="insertSuccessKilled" >
+		<!-- 忽略插入重复错误 -->
+		insert ignore into success_killed (
+			killed_id,
+			user_phone,
+			state
+		)
+		values
+		(
+			#{seckillId},
+			#{userPhone},
+			0
+		)
+		
+	</insert>
+	
+	<select id="queryByIdWithSeckill" resultType="SuccessKilled">
+	
+		select 	
+			t1.killed_id,
+			t1.user_phone,
+			t1.state,
+			t1.create_time,
+			t2.seckill_id "seckill.seckilledId",
+			t2.objname "seckill.objName",
+			t2.number "seckill.number",
+			t2.start_time "seckill.startTime",
+			t2.end_time "seckill.endTime",
+			t2.create_time "seckill.createTime"
+		from success_killed t1 inner join seckill t2 on t1.killed_id=t2.seckill_id
+		<where>
+			t1.killed_id=#{seckillId} and t1.user_phone=#{phone}
+		</where>
+
+	</select>
+
+</mapper>
