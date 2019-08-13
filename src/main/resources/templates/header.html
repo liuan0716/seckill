@@ -41,7 +41,9 @@
                         </div>
                         <button class="btn btn-success" type="button"  th:onclick="form_submit()">Sign in</button>
                     </form>
+                    <a class="btn btn-sm btn-warning btn-block hidden" id="logout" style="float: right;color: white;width: 100px;margin-top: 10px;margin-left:20px" th:href="@{'../user/logout'}">Log out</a>
                     <span class="hidden" style="float: right;color: white;font-size: medium;margin-top: 14px" id="username_place"></span>
+
 
                 </div><!--/.navbar-collapse -->
             </div>

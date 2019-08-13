@@ -59,6 +59,30 @@ public class UserController {
 
     }
 
+    /**
+     *
+     * @param request
+     * @return
+     */
+    @RequestMapping(value="/logout",method = RequestMethod.GET)
+    public String logout(HttpServletRequest request,HttpServletResponse response){
+        Cookie[] cookies=request.getCookies();
+        for (Cookie cookie:cookies) {
+            if("username".equals(cookie.getName())){
+                Cookie c1=new Cookie("username",null);
+                c1.setMaxAge(0);
+                c1.setPath("/");
+                Cookie c2=new Cookie("phone",null);
+                c2.setMaxAge(0);
+                c2.setPath("/");
+                response.addCookie(c1);
+                response.addCookie(c2);
+                break;
+            }
+        }
+        return "login";
+    }
+
     @RequestMapping(value="/login/execution",method = RequestMethod.POST)
     @ResponseBody
     public ResponseResult executeLogin(@RequestParam("email") String email, @RequestParam("password") String password,HttpServletResponse response){
