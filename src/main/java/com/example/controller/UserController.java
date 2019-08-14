@@ -1,5 +1,6 @@
 package com.example.controller;
 
+import com.example.aux.KeyPic;
 import com.example.bean.User;
 import com.example.dto.ResponseResult;
 import com.example.service.UserService;
@@ -17,6 +18,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
 import java.util.Date;
 
 @Controller
@@ -108,9 +110,10 @@ public class UserController {
         }
     }
 
-    @RequestMapping(value="/demo")
-    public String demo(){
-        return "demo";
+    @RequestMapping(value="/codeCheck",produces="image/png")
+    @ResponseBody
+    public byte[] demo() throws IOException {
+        return KeyPic.createImage();
     }
 
 

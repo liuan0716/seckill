@@ -30,6 +30,7 @@ public class WebConfigurer implements WebMvcConfigurer {
                 "/user/reg",
                 "/user/login/execution",
                 "/user/reg/execution",
+                "/user/codeCheck",
                 "/seckill/list",
                 "/seckill/*/detail"
         );
