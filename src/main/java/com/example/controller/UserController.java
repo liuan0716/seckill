@@ -108,6 +108,11 @@ public class UserController {
         }
     }
 
+    @RequestMapping(value="/demo")
+    public String demo(){
+        return "demo";
+    }
+
 
 
 
