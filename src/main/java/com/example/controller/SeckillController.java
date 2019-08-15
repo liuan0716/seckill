@@ -1,5 +1,6 @@
 package com.example.controller;
 
+import com.example.aux.AesEncoder;
 import com.example.bean.Seckill;
 import com.example.bean.StatusEnum;
 import com.example.dto.Exposer;
@@ -60,13 +61,15 @@ ISeckillService seckillService;
 
     @RequestMapping(value="/execute",method=RequestMethod.POST,produces = "application/json;charset=utf-8")
     @ResponseBody
-    public SeckillResult<SeckillExcution> execute(@RequestParam("seckillId") Long seckillId,@RequestParam("md5") String md5,@CookieValue(value="phone",required = false) Long phone){
+    public SeckillResult<SeckillExcution> execute(@RequestParam("seckillId") Long seckillId,@RequestParam("md5") String md5,@CookieValue(value="phone",required = false) String phone){
         System.out.println("seckillId:"+seckillId+",md5:"+md5+",phone:"+phone);
         if(phone==null){
             return new SeckillResult<SeckillExcution>(false,"未注册");
         }
         try {
-            SeckillExcution execution=seckillService.executeSeckill(seckillId,phone,md5);
+            String sec= AesEncoder.AESDncode("12345678",phone);
+            System.out.println("AES解密phone结果："+sec);
+            SeckillExcution execution=seckillService.executeSeckill(seckillId,Long.parseLong(sec),md5);
             return new SeckillResult<SeckillExcution>(true,execution);
         }catch (SeckillCloseException e1){
             SeckillExcution execution=new SeckillExcution(seckillId,StatusEnum.SECKILL_ENDED);

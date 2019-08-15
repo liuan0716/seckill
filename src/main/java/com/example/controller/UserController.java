@@ -1,5 +1,6 @@
 package com.example.controller;
 
+import com.example.aux.AesEncoder;
 import com.example.aux.KeyPic;
 import com.example.bean.User;
 import com.example.dto.ResponseResult;
@@ -95,7 +96,7 @@ public class UserController {
             user.setPassword("");
             //使用cookie将登陆信息存在客户端，减轻服务端压力
             Cookie cookie1=new Cookie("username",user.getName());
-            Cookie cookie2 =new Cookie("phone",user.getPhone());
+            Cookie cookie2 =new Cookie("phone", AesEncoder.AESEncode("12345678",user.getPhone()));
             cookie1.setMaxAge(60 * 60);// 设置为30min，生命周期
             cookie1.setPath("/");//设置Cookie的使用路径
             response.addCookie(cookie1);// 保存cookie到客户端
