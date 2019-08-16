@@ -67,7 +67,7 @@ public class SeckillService implements ISeckillService {
 	@Transactional
 	public SeckillExcution executeSeckill(long seckillId, long phone, String md5) {
 		//秒杀时生成的md5与自动生成的不一致,跑出秒杀异常
-		if(md5==null || !getMD5(md5+"/").equals(getMD5(seckillId+"/"))) {
+		if(md5==null || !md5.equals(getMD5(seckillId+"/"))) {
 			throw new SeckillException("seckill data rewrite!");
 		}
 		//执行秒杀:减库存+记录秒杀行为

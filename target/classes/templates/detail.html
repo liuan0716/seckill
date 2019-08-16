@@ -25,7 +25,7 @@
                     <h3 th:text="'活动商品   '+${seckill.objName}">Thumbnail label</h3>
                     <p th:text="'库存   '+${seckill.number}"></p>
                     <div class="getting-started"></div>
-                    <a href="#" class="btn btn-primary" id="seckill_submit" role="button" th:onclick="'seckill('+${seckill.seckilledId}+','+${seckill.seckilledId}+')'">开始</a>
+                    <a href="#" class="btn btn-primary" id="seckill_submit" role="button" th:onclick="'exposer('+${seckill.seckilledId}+')'">开始</a>
                 </div>
             </div>
         </div>
@@ -42,7 +42,7 @@
         const ctxPath =[[${#httpServletRequest.getScheme() + '://' + #httpServletRequest.getServerName() + ':' + #request.getServerPort()  + #request.getContextPath() + '/'}]];
         /*]]>*/
 
-        function countDown(startTime,endTime,nowTime){
+        function countDown(id,startTime,endTime,nowTime){
             console.log(nowTime+","+startTime+","+endTime);
             if(nowTime > endTime){
                 $('.getting-started').html("秒杀结束");
@@ -50,34 +50,16 @@
                 const killTime = new Date(startTime);
                 $(".getting-started").countdown(killTime,function(event){
                     var format=event.strftime('秒杀倒计时：%D天 %H时 %M分 %S秒');
-                    console.log(format);
                     $('.getting-started').html(format);
-                    if(format==="秒杀倒计时：00天 00时 00分 00秒"){
-                        $('.getting-started').html("秒杀开始");
-                        $('#seckill_submit').show();
-                    }
+                }).on('finish.countdown',function(){
+                    $('.getting-started').html("秒杀开始");
+                    $("#seckill_submit").show();
                 });
             }else{
                 $('.getting-started').html("秒杀开始");
-                $('#seckill_submit').show();
+                $("#seckill_submit").show();
             }
         }
-
-        $(function(){
-
-            /*<![CDATA[*/
-            let startTime=[[${seckill.startTime.getTime()}]];
-            let endTime=[[${seckill.endTime.getTime()}]];
-            /*]]>*/
-            $("#seckill_submit").hide();
-            var nowTime=null;
-            $.get(ctxPath+"seckill/now",{},function(obj,status){
-                console.log(status);
-                nowTime = obj.object;//当前时间
-                countDown(startTime,endTime,nowTime);
-            });
-
-        });
 
         function seckill(id,md5){
             const order={"seckillId":id,"md5":md5};
@@ -102,6 +84,43 @@
                 }
             );
         }
+
+        function exposer(id){
+            $.ajax(
+                {
+                    url:ctxPath+"seckill/exposer",
+                    type:"post",
+                    dataType:"json",
+                    data:{seckillId:id},
+                    success:function(obj){
+                        if(obj.object.exposed){
+                            var md5=obj.object.md5;
+                            //获取md5,进行秒杀
+                            seckill(id,md5);
+                        }
+                    },
+                    error:function(){
+                        window.location.href=ctxPath+"seckill/list";
+                    }
+                }
+            );
+        }
+
+        $(function(){
+
+            /*<![CDATA[*/
+            let id=[[${seckill.seckilledId}]];
+            let startTime=[[${seckill.startTime.getTime()}]];
+            let endTime=[[${seckill.endTime.getTime()}]];
+            /*]]>*/
+            $("#seckill_submit").hide();
+            var nowTime=null;
+            $.get(ctxPath+"seckill/now",{},function(obj,status){
+                nowTime = obj.object;//当前时间
+                countDown(id,startTime,endTime,nowTime);
+            });
+
+        });
 
     </script>
 </body>
