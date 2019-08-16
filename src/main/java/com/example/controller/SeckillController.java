@@ -4,6 +4,7 @@ import com.example.aux.AesEncoder;
 import com.example.bean.Seckill;
 import com.example.bean.StatusEnum;
 import com.example.dto.Exposer;
+import com.example.dto.ResponseResult;
 import com.example.dto.SeckillExcution;
 import com.example.dto.SeckillResult;
 import com.example.service.ISeckillService;
@@ -14,6 +15,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Date;
 import java.util.List;
 
 @RequestMapping("/seckill")//restful设计思想   模块
@@ -83,6 +85,14 @@ ISeckillService seckillService;
             return new SeckillResult<SeckillExcution>(false,execution);
         }
 
+    }
+
+    @RequestMapping(value = "/now",method=RequestMethod.GET)
+    @ResponseBody
+    public ResponseResult getNow(){
+        Date now=new Date();
+        System.out.println(now.getTime());
+        return new ResponseResult(1,now.getTime());
     }
 
 }
